@@ -15,17 +15,19 @@ conn = psycopg2.connect(
 cur = conn.cursor()
 
 
-def create_table():
-    cur.execute('''CREATE TABLE IF NOT EXISTS expenses (
-                ID INT PRIMARY KEY NOT NULL,
-                MONEY INT NOT NULL,
-                CATEGORY TEXT NOT NULL,
-                DATE TEXT);'''
-                )
 
+def fetchall(table, columns):
+    columns_joined = ', '.join(columns)
+    cur.execute(f'SELECT {columns_joined} FROM {table}')
+    rows = cur.fetchall()
+    result = []
+    for row in rows:
+        dict_row = {}
+        for index, column in enumerate(columns):
+            dict_row[column]  = row[index]
+        result.append(dict_row)
+    return result
 
-create_table()
-conn.commit()
 
 
 class Message():
