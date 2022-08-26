@@ -16,6 +16,8 @@ dp = Dispatcher(bot)
 
 
 def auth(func):
+    import functools
+    @functools.wraps(func)
     async def wrapper(message):
         if message['from']['id'] != USER_ID:
             return await message.reply('Аксесс денайд', reply=False)
