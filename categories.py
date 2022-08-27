@@ -1,4 +1,12 @@
 import database
+from typing import List, NamedTuple
+
+
+class Category(NamedTuple):
+    codename: str
+    name: str
+    is_basic_expense: bool
+    aliases: List[str]
 
 
 class Categories:

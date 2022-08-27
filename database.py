@@ -1,7 +1,11 @@
+from typing import NamedTuple, Optional
+import database
 import psycopg2
 from dotenv import load_dotenv
 import os
 import re
+
+from categories import Categories
 
 
 load_dotenv()
@@ -15,7 +19,6 @@ conn = psycopg2.connect(
 cur = conn.cursor()
 
 
-
 def fetchall(table, columns):
     columns_joined = ', '.join(columns)
     cur.execute(f'SELECT {columns_joined} FROM {table}')
@@ -24,17 +27,39 @@ def fetchall(table, columns):
     for row in rows:
         dict_row = {}
         for index, column in enumerate(columns):
-            dict_row[column]  = row[index]
+            dict_row[column] = row[index]
         result.append(dict_row)
     return result
 
 
+def insert(table, column_values):
+    columns = ', '.join(column_values.keys())
+    values = [tuple(column_values.values())]
+    placeholders = ', '.join('?' * len(column_values.keys()))
+    cur.executemany(
+        f'INSERT INTO {table}'
+        f'({columns})'
+        f'VALUES ({placeholders})',
+        values)
 
-class Message():
+    conn.commit()
 
-    def __init__(self, money_amount, category):
-        self.money_amount = money_amount
-        self.category = category
+
+def delete(table, row_id):
+    row_id = int(row_id)
+    cur.execute(f'DELETE FROM {table} WHERE ID={row_id}')
+    conn.commit()
+
+
+class Message(NamedTuple):
+    money_amount: int
+    category: str
+
+
+class Expense(NamedTuple):
+    id: Optional[int]
+    money_amount: int
+    category: str
 
 
 def _parse_message(message: str):
@@ -51,4 +76,15 @@ def _parse_message(message: str):
 
 def add_receipt(raw_message):
     parsed_message = _parse_message(raw_message)
-    category = 
+    category = Categories.get_category(parsed_message.category)
+    inserted_row_id = database.insert('expense', {
+        'money_amount': parsed_message.money_amount,
+        'created': _get_now_formatted(),
+        'category_codename': category.codename,
+        'raw_text': raw_message,
+    })
+    return Expense(
+        id=None,
+        money_amount=parsed_message.money_amount,
+        category=category.name,
+    )
