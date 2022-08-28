@@ -1,11 +1,6 @@
-from typing import NamedTuple, Optional
-import database
 import psycopg2
 from dotenv import load_dotenv
 import os
-import re
-
-from categories import Categories
 
 
 load_dotenv()
@@ -51,40 +46,5 @@ def delete(table, row_id):
     conn.commit()
 
 
-class Message(NamedTuple):
-    money_amount: int
-    category: str
-
-
-class Expense(NamedTuple):
-    id: Optional[int]
-    money_amount: int
-    category: str
-
-
-def _parse_message(message: str):
-    regex_check = re.match(r'\d', message)
-    if not regex_check:
-        raise ValueError(
-            """Некорректный формат сообщения.
-            Пиши в формате: 200 еда"""
-        )
-    money_amount = regex_check[0]
-    category = regex_check[1].strip().lower()
-    return Message(money_amount=money_amount, category=category)
-
-
-def add_receipt(raw_message):
-    parsed_message = _parse_message(raw_message)
-    category = Categories.get_category(parsed_message.category)
-    inserted_row_id = database.insert('expense', {
-        'money_amount': parsed_message.money_amount,
-        'created': _get_now_formatted(),
-        'category_codename': category.codename,
-        'raw_text': raw_message,
-    })
-    return Expense(
-        id=None,
-        money_amount=parsed_message.money_amount,
-        category=category.name,
-    )
+def get_cursor():
+    return cur

@@ -10,7 +10,7 @@ CREATE TABLE category(
     aliases TEXT,
 )
 
-CREATE TABLE expenses(
+CREATE TABLE expense(
     id INTEGER PRIMARY KEY,
     money_amount INTEGER,
     created DATE,

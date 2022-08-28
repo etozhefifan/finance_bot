@@ -17,16 +17,23 @@ class Categories:
         categories = database.fetchall(
             'category', 'codename name is_basic_expense aliases'.split()
         )
-        self._fill_aliases(categories)
+        categories = self._fill_aliases(categories)
         return categories
 
     def _fill_aliases(self, categories):
-        for index, category in enumerate(Categories):
-            aliases = category['aliases'].split(',')
+        categories_result = []
+        for index, category in enumerate(categories):
+            aliases = category["aliases"].split(",")
             aliases = list(filter(None, map(str.strip, aliases)))
-            aliases.append(category['codename'])
-            aliases.append(category['name'])
-            categories[index]['aliases'] = aliases
+            aliases.append(category["codename"])
+            aliases.append(category["name"])
+            categories_result.append(Category(
+                codename=category['codename'],
+                name=category['name'],
+                is_base_expense=category['is_base_expense'],
+                aliases=aliases
+            ))
+        return categories_result
 
     def get_all_categories(self):
         return self._categories
