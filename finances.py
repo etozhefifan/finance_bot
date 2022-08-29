@@ -55,10 +55,10 @@ def get_statistic():
     if not result[0]:
         return 'Ещё нет расходов в этом месяце'
     all_monthly_expenses = result[0] if result[0] else 0
-    cur.execute(f'SELECT SUM(MONEY_AMOUNT)'
-                f'FROM EXPENSE WHERE DATE(CREATED) >= {first_day_of_month}'
-                f'AND CATEGORY_CODENAME IN (SELECET CODENAME'
-                f'FROM CATEGORY WHERE IS_BASIC_EXPENSE=TRUE)'
+    cur.execute(f'SELECT SUM (money amount) FROM expense '
+                f'WHERE DATE(created) >= "{first_day_of_month}" '
+                f'AND category_codename IN (SELECT codename '
+                f'FROM category WHERE is_basic_expense=TRUE)'
                 )
     result = cur.fetchone()
     base_montly_expenses = result[0] if result[0] else 0

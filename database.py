@@ -30,11 +30,9 @@ def fetchall(table, columns):
 def insert(table, column_values):
     columns = ', '.join(column_values.keys())
     values = [tuple(column_values.values())]
-    placeholders = ', '.join('?' * len(column_values.keys()))
+    placeholders = ', '.join(['%s'] * len(column_values.keys()))
     cur.executemany(
-        f'INSERT INTO {table}'
-        f'({columns})'
-        f'VALUES ({placeholders})',
+        f'INSERT INTO {table} ({columns}) VALUES ({placeholders})',
         values)
 
     conn.commit()

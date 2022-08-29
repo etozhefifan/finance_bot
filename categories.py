@@ -30,7 +30,7 @@ class Categories:
             categories_result.append(Category(
                 codename=category['codename'],
                 name=category['name'],
-                is_base_expense=category['is_base_expense'],
+                is_basic_expense=category['is_basic_expense'],
                 aliases=aliases
             ))
         return categories_result
@@ -42,9 +42,9 @@ class Categories:
         finded = None
         other_category = None
         for category in self._categories:
-            if category['codename'] == 'other':
+            if category.codename == 'other':
                 other_category = category
-            for alias in category['aliases']:
+            for alias in category.aliases:
                 if category_name in alias:
                     finded = category
         if not finded:

@@ -44,7 +44,7 @@ async def add_expense(message):
         return
     answer_message = (
         f'Добавлены чеки: {receipt.money_amount} руб. на {receipt.category_name}'
-        f'{finances.get_statistic}'
+        f'{finances.get_statistic()}'
     )
     await message.answer(answer_message)
 
