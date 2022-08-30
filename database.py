@@ -5,7 +5,7 @@ import os
 
 load_dotenv()
 conn = psycopg2.connect(
-                        dbname='expenses',
+                        dbname='finance_bot',
                         user=os.getenv('DB_USER'),
                         password=os.getenv('DB_PASSWORD'),
                         host='localhost',

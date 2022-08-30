@@ -49,31 +49,31 @@ def get_statistic():
     now = _get_now_datetime()
     first_day_of_month = f'{now.year:04d}-{now.month:02d}-01'
     cur = database.get_cursor()
-    cur.execute('SELECT SUM(MONEY_AMOUT)'
-                f'FROM EXPENSE WHERE DATE(CREATED) >= {first_day_of_month}')
+    cur.execute('SELECT SUM(money_amount) '
+                f'FROM expense WHERE created >= %s', [first_day_of_month])
     result = cur.fetchone()
     if not result[0]:
         return 'Ещё нет расходов в этом месяце'
     all_monthly_expenses = result[0] if result[0] else 0
-    cur.execute(f'SELECT SUM (money amount) FROM expense '
-                f'WHERE DATE(created) >= "{first_day_of_month}" '
+    cur.execute(f'SELECT SUM(money_amount) FROM expense '
+                f'WHERE created >= %s'
                 f'AND category_codename IN (SELECT codename '
-                f'FROM category WHERE is_basic_expense=TRUE)'
-                )
+                f'FROM category WHERE is_basic_expense=TRUE)',
+                [first_day_of_month])
     result = cur.fetchone()
     base_montly_expenses = result[0] if result[0] else 0
     return (f'Расходы за месяц:\n '
-            f'всего — {all_monthly_expenses}'
+            f'всего — {all_monthly_expenses} \n'
             f'базовые — {base_montly_expenses}')
 
 
 def last():
     cur = database.get_cursor()
     cur.execute(
-        'SELECT E.ID, E.AMOUNT, C.NAME '
-        'FROM EXPENSE E LEFT JOIN CATEGORY C'
-        'ON C.CODENAME=E.CATEGORY_CODENAME'
-        'ORDER BY CREATED DESC LIMIT 10'
+        'SELECT E.id, E.money_amount, C.name '
+        'FROM expense E LEFT JOIN category C '
+        'ON C.codename=E.category_codename '
+        'ORDER BY created DESC LIMIT 10'
     )
     rows = cur.fetchall()
     last_expenses = [Expense(id=row[0], money_amount=row[1], category_name=row[2]) for row in rows]
@@ -81,7 +81,7 @@ def last():
 
 
 def delete_receipt(row_id):
-    database.delete('EXPENSE', row_id)
+    database.delete('expense', row_id)
 
 
 def _get_now_datetime():
