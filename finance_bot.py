@@ -46,12 +46,19 @@ async def categories(message):
     await message.answer(reply)
 
 
-@dp.message_handler(lambda message: message.text.startswith('/del'))
+@dp.message_handler(lambda message: message.text.startswith('/delete'))
 @auth
 async def delete_receipt(message):
     row_id = int(message.text[4:])
     finances.delete_receipt(row_id)
     await message.answer('Удалил')
+
+
+@dp.message_handler(lambda message: message.text.startswith('/delall'))
+@auth
+async def delete_receipts_for_month(message):
+    finances.delete_receipts_for_month()
+    await message.answer('Чеки за месяц удалены')
 
 
 @dp.message_handler(commands=['statistic'])
@@ -65,7 +72,7 @@ async def statistics(message):
 async def expenses(message):
     last_expenses = finances.last()
     if not last_expenses:
-        await 'Нет расходов'
+        await message.answer('Нет расходов')
 
     last_expenses_rows = [
         f'{expense.money_amount} руб. потрачено на {expense.category_name}\n'

@@ -84,6 +84,15 @@ def delete_receipt(row_id):
     database.delete('expense', row_id)
 
 
+def delete_receipts_for_month():
+    now = _get_now_datetime()
+    first_day_of_month = f'{now.year:04d}-{now.month:02d}-01'
+    cur = database.get_cursor()
+    cur.execute(
+        f'DELETE FROM expense WHERE created >= %s',
+        [first_day_of_month]
+    )
+
 def _get_now_datetime():
     tz = pytz.timezone('Europe/Moscow')
     now = datetime.datetime.now(tz)
