@@ -63,8 +63,9 @@ def get_statistic():
     result = cur.fetchone()
     base_montly_expenses = result[0] if result[0] else 0
     return (f'Расходы за месяц:\n '
-            f'всего — {all_monthly_expenses} \n'
-            f'базовые — {base_montly_expenses}')
+            f'всего — %d \n'
+            f'базовые — %d'
+            % (all_monthly_expenses, base_montly_expenses))
 
 
 def last():
