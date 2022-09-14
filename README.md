@@ -16,7 +16,7 @@ The template of receipt:
 More explicitly: first place is reserved for the money that was spent, second place is the category that money was spent on.
 
 ## Requirements
-Could be found in requirements.txt
+Can be found in requirements.txt
 ### To install:
 1. Git clone the repository
 2. Create venv
